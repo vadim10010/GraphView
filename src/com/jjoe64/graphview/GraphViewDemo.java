@@ -31,7 +31,8 @@ public class GraphViewDemo extends Activity {
 		);
 		float[] intervals = new float[]{2.0f,2.0f};
 		DashPathEffect effect = new DashPathEffect(intervals, 2);
-		graphView.setAxisVert(new GraphAxisStyle(Color.BLUE, 2, effect));
+		DashPathEffect effect1 = new DashPathEffect(intervals, 2);
+		graphView.setAxisVert(new GraphAxisStyle(Color.BLUE, 0, effect, effect1));
 		graphView.addSeries(new GraphViewSeries(new GraphViewData[] {
 				new GraphViewData(1, 2.0d)
 				, new GraphViewData(2, 1.5d)

@@ -7,7 +7,6 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.PathEffect;
@@ -198,9 +197,7 @@ abstract public class GraphView extends LinearLayout {
 	static public class GraphViewStyle {
 		public int graphColor = 0xff0077cc;
 		public int thickness = 3;
-
-		// public int xAxisColor = ;
-		// public int yAxisColor = ;
+		
 		public GraphViewStyle() {
 			super();
 		}
@@ -212,6 +209,12 @@ abstract public class GraphView extends LinearLayout {
 		}
 	}
 
+	/**
+	 * Style for vertical and horizontal lines. Here can changes color, stroke and also you can add different effects from class PathEffect (optional) 
+	 * @author Vadim
+	 *
+	 */
+	
 	static public class GraphAxisStyle {
 		public int color;
 		public float stroke;

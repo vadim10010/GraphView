@@ -1,6 +1,10 @@
 package com.jjoe64.graphview;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
@@ -73,6 +77,7 @@ public class LineGraphView extends GraphView {
 		// draw data
 		lastEndY = 0;
 		lastEndX = 0;
+
 		for (int i = 0; i < values.length; i++) {
 			double valY = values[i].valueY - minY;
 			double ratY = valY / diffY;
@@ -105,13 +110,5 @@ public class LineGraphView extends GraphView {
 	 */
 	public void setDrawBackground(boolean drawBackground) {
 		this.drawBackground = drawBackground;
-	}
-
-	static class GraphViewStyle {
-		
-	}
-
-	public void setStyle() {
-
 	}
 }
