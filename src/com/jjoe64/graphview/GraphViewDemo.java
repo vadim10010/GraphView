@@ -1,8 +1,11 @@
 package com.jjoe64.graphview;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.os.Bundle;
 
+import com.jjoe64.graphview.GraphView.GraphAxisStyle;
 import com.jjoe64.graphview.GraphView.GraphViewData;
 import com.jjoe64.graphview.GraphView.GraphViewSeries;
 
@@ -26,6 +29,9 @@ public class GraphViewDemo extends Activity {
 				this
 				, "GraphViewDemo"
 		);
+		float[] intervals = new float[]{2.0f,2.0f};
+		DashPathEffect effect = new DashPathEffect(intervals, 2);
+		graphView.setAxisVert(new GraphAxisStyle(Color.BLUE, 2, effect));
 		graphView.addSeries(new GraphViewSeries(new GraphViewData[] {
 				new GraphViewData(1, 2.0d)
 				, new GraphViewData(2, 1.5d)
