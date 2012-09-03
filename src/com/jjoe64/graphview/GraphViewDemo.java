@@ -35,21 +35,25 @@ public class GraphViewDemo extends Activity {
 		
 		
 		GraphViewData[] data = new GraphViewData[] {
-				new GraphViewData(1, 2.0d)
-				, new GraphViewData(2, 1.5d)
-				, new GraphViewData(2.5, 3.0d)
-				, new GraphViewData(3, 2.5d)
-				, new GraphViewData(4, 1.0d)
-				, new GraphViewData(5, 3.0d)
+				new GraphViewData(24d, 100d)
+				, new GraphViewData(25d, 150d)
+				, new GraphViewData(26d, 200d)
+				, new GraphViewData(27d, 150d)
+				, new GraphViewData(28d, 250d)
+				, new GraphViewData(29d, 200d)
+				, new GraphViewData(30d, 150d)
 		};
 		int[] indexes = new int[data.length-1];
-		for(int i=0;i<indexes.length;i++){
+		for(int i=0;i<2/*indexes.length-1*/;i++){
 			indexes[i] = i;
 		}
 		VertexManager manager = new VertexManager();
 		manager.addVertex(R.drawable.point, indexes);
 		manager.addVertex(R.drawable.big_point, new int[]{data.length-1});
-		
+		String[] labels = {"24 okt", "25 okt"};
+		graphView.setHorizontalLabels(labels);
+		String[] labels2 = {"300","200", "100"};
+		graphView.setVerticalLabels(labels2);
 		graphView.addSeries(new GraphViewSeries(data));
 		graphView.setManager(manager);
 		setContentView(graphView);

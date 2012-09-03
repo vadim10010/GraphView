@@ -15,6 +15,11 @@ public class VertexManager {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param idVertex
+	 * @return return 0 if resource for vertex not founded
+	 */
 	public int getResourceId(int idVertex){
 		return indexes.get(idVertex);
 	}

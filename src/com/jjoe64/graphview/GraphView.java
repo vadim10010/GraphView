@@ -11,6 +11,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.PathEffect;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -109,6 +110,9 @@ abstract public class GraphView extends LinearLayout {
 				if (i == 0)
 					paint.setTextAlign(Align.LEFT);
 				paint.setColor(Color.WHITE);
+				if (labelsTypeface != null) {
+					paint.setTypeface(labelsTypeface);
+				}
 				canvas.drawText(horlabels[i], x, height - 4, paint);
 			}
 
@@ -122,11 +126,11 @@ abstract public class GraphView extends LinearLayout {
 				for (int i = 0; i < graphSeries.size(); i++) {
 					paint.setStrokeWidth(graphSeries.get(i).style.thickness);
 					paint.setColor(graphSeries.get(i).style.graphColor);
-					
+
 					if (manager != null) {
 						setVertexManager(manager);
 					}
-					
+
 					drawSeries(canvas, _values(i), graphwidth, graphheight,
 							border, minX, minY, diffX, diffY, horstart);
 				}
@@ -351,6 +355,8 @@ abstract public class GraphView extends LinearLayout {
 	private Paint axisHor;
 	private Paint axisVert;
 	private VertexManager manager;
+	private int horizontalLabelsCount;
+	private Typeface labelsTypeface;
 
 	/**
 	 * Seting vertex manager, which manage vertex images.
@@ -384,6 +390,10 @@ abstract public class GraphView extends LinearLayout {
 		addView(viewVerLabels);
 		addView(new GraphViewContentView(context), new LayoutParams(
 				LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT, 1));
+	}
+
+	public void setLabelsTypeface(Typeface labelsTypeface) {
+		this.labelsTypeface = labelsTypeface;
 	}
 
 	/**
@@ -420,6 +430,16 @@ abstract public class GraphView extends LinearLayout {
 				axisVert.setPathEffect(effect);
 			}
 		}
+	}
+
+	/**
+	 * Set how much horizontal you have, and it willn't recalculated
+	 * automaticaly
+	 * 
+	 * @param value
+	 */
+	public void setHorizontalLabelsCount(int value) {
+		horizontalLabelsCount = value;
 	}
 
 	private GraphViewData[] _values(int idxSeries) {
@@ -540,7 +560,12 @@ abstract public class GraphView extends LinearLayout {
 	}
 
 	private String[] generateHorlabels(float graphwidth) {
-		int numLabels = (int) (graphwidth / GraphViewConfig.VERTICAL_LABEL_WIDTH);
+		int numLabels = 0;
+		if (horizontalLabelsCount != 0) {
+			numLabels = horizontalLabelsCount;
+		} else {
+			numLabels = (int) (graphwidth / GraphViewConfig.VERTICAL_LABEL_WIDTH);
+		}
 		String[] labels = new String[numLabels + 1];
 		double min = getMinX(false);
 		double max = getMaxX(false);

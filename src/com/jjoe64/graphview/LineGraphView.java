@@ -129,19 +129,22 @@ public class LineGraphView extends GraphView {
 	public void drawDots(List<Float> dotsX, List<Float> dotsY, Canvas canvas) {
 
 		Paint paintDots = new Paint(paint);
-		
-		Bitmap b = BitmapFactory.decodeResource(getResources(), verMan.getResourceId(0)); // for a first vertex load resources
+
+		Bitmap b = BitmapFactory.decodeResource(getResources(),
+				verMan.getResourceId(0)); // for a first vertex load resources
 		int idPrevios = verMan.getResourceId(0);
-		int idCurrent; 
+		int idCurrent;
 		for (int i = 0; i < dotsX.size(); i++) {
-			idCurrent = i;
-			
-			if(idCurrent!=idPrevios){
-				b = BitmapFactory.decodeResource(getResources(), verMan.getResourceId(idCurrent));
+			idCurrent = verMan.getResourceId(i);
+
+			if (idCurrent != idPrevios) {
+				b = BitmapFactory.decodeResource(getResources(), idCurrent);
 			}
-			
-			canvas.drawBitmap(b, (float) (dotsX.get(i) - b.getWidth() / 2),
-					(float) (dotsY.get(i) - b.getHeight() / 2), paintDots);
+
+			if (b != null) {
+				canvas.drawBitmap(b, (float) (dotsX.get(i) - b.getWidth() / 2),
+						(float) (dotsY.get(i) - b.getHeight() / 2), paintDots);
+			}
 		}
 	}
 }
