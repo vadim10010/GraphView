@@ -26,4 +26,8 @@ public class BarGraphView extends GraphView {
 			canvas.drawRect((i * colwidth) + horstart, (border - y) + graphheight, ((i * colwidth) + horstart) + (colwidth - 1), graphheight + border - 1, paint);
 		}
 	}
+
+	@Override
+	public void setVertexManager(VertexManager manager) {
+	}
 }

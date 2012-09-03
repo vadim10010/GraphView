@@ -122,6 +122,11 @@ abstract public class GraphView extends LinearLayout {
 				for (int i = 0; i < graphSeries.size(); i++) {
 					paint.setStrokeWidth(graphSeries.get(i).style.thickness);
 					paint.setColor(graphSeries.get(i).style.graphColor);
+					
+					if (manager != null) {
+						setVertexManager(manager);
+					}
+					
 					drawSeries(canvas, _values(i), graphwidth, graphheight,
 							border, minX, minY, diffX, diffY, horstart);
 				}
@@ -197,7 +202,7 @@ abstract public class GraphView extends LinearLayout {
 	static public class GraphViewStyle {
 		public int graphColor = 0xff0077cc;
 		public int thickness = 3;
-		
+
 		public GraphViewStyle() {
 			super();
 		}
@@ -210,11 +215,13 @@ abstract public class GraphView extends LinearLayout {
 	}
 
 	/**
-	 * Style for vertical and horizontal lines. Here can changes color, stroke and also you can add different effects from class PathEffect (optional) 
+	 * Style for vertical and horizontal lines. Here can changes color, stroke
+	 * and also you can add different effects from class PathEffect (optional)
+	 * 
 	 * @author Vadim
-	 *
+	 * 
 	 */
-	
+
 	static public class GraphAxisStyle {
 		public int color;
 		public float stroke;
@@ -224,13 +231,16 @@ abstract public class GraphView extends LinearLayout {
 			color = Color.DKGRAY;
 			stroke = 1;
 		}
-		
+
 		/**
 		 * @param <b>int color</b> set the color for axis line
 		 * 
 		 * @param <b>float stroke</b> set the width of line
 		 * 
-		 * @param <b>PathEffect... effects</b> optional parameter which set different effects for lines 
+		 * @param <b>PathEffect... effects</b> optional parameter which set
+		 *        different effects for lines
+		 * 
+		 * @author Vadim
 		 */
 		public GraphAxisStyle(int color, float stroke, PathEffect... effects) {
 			this.color = color;
@@ -340,6 +350,16 @@ abstract public class GraphView extends LinearLayout {
 	private double manualMinYValue;
 	private Paint axisHor;
 	private Paint axisVert;
+	private VertexManager manager;
+
+	/**
+	 * Seting vertex manager, which manage vertex images.
+	 * 
+	 * @param manager
+	 */
+	public void setManager(VertexManager manager) {
+		this.manager = manager;
+	}
 
 	/**
 	 * 
@@ -369,15 +389,16 @@ abstract public class GraphView extends LinearLayout {
 	/**
 	 * Set style for horizontal lines, if needed
 	 * 
-	 * @param GraphAxisStyle for x axis
+	 * @param GraphAxisStyle
+	 *            for x axis
 	 */
 	public void setyAxisHor(GraphAxisStyle style) {
 		axisHor = new Paint(paint);
 		axisHor.setColor(style.color);
 		axisHor.setStrokeWidth(style.stroke);
-		
-		if(style.effects!=null){
-			for(PathEffect effect:style.effects){
+
+		if (style.effects != null) {
+			for (PathEffect effect : style.effects) {
 				axisVert.setPathEffect(effect);
 			}
 		}
@@ -386,15 +407,16 @@ abstract public class GraphView extends LinearLayout {
 	/**
 	 * Set style for vertical lines, if needed
 	 * 
-	 * @param GraphAxisStyle for y axis
+	 * @param GraphAxisStyle
+	 *            for y axis
 	 */
 	public void setAxisVert(GraphAxisStyle style) {
 		axisVert = new Paint(paint);
 		axisVert.setColor(style.color);
 		axisVert.setStrokeWidth(style.stroke);
-		
-		if(style.effects!=null){
-			for(PathEffect effect:style.effects){
+
+		if (style.effects != null) {
+			for (PathEffect effect : style.effects) {
 				axisVert.setPathEffect(effect);
 			}
 		}
@@ -485,6 +507,8 @@ abstract public class GraphView extends LinearLayout {
 	abstract public void drawSeries(Canvas canvas, GraphViewData[] values,
 			float graphwidth, float graphheight, float border, double minX,
 			double minY, double diffX, double diffY, float horstart);
+
+	abstract public void setVertexManager(VertexManager manager);
 
 	/**
 	 * formats the label can be overwritten
