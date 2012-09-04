@@ -8,6 +8,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.util.AttributeSet;
 
 /**
  * Line Graph View. This draws a line chart.
@@ -21,6 +23,37 @@ public class LineGraphView extends GraphView {
 	private final Paint paintBackground;
 	private boolean drawBackground;
 	private VertexManager verMan;
+	private int colorSpecialBackground;
+	private int alpha;
+	private boolean drawSpecialBackground;
+
+	public int getAlpha() {
+		return alpha;
+	}
+
+	public int getColorSpecialBackground() {
+		return colorSpecialBackground;
+	}
+
+	public void setColorSpecialBackground(int colorSpecialBackground) {
+		this.colorSpecialBackground = colorSpecialBackground;
+	}
+
+	public void setAlpha(int alpha) {
+		this.alpha = alpha;
+	}
+
+	public boolean isDrawSpecialBackground() {
+		return drawSpecialBackground;
+	}
+
+	public void setDrawSpecialBackground(boolean draSpecialBackground) {
+		this.drawSpecialBackground = draSpecialBackground;
+	}
+
+	public Paint getPaintBackground() {
+		return paintBackground;
+	}
 
 	@Override
 	public void setVertexManager(VertexManager manager) {
@@ -34,6 +67,32 @@ public class LineGraphView extends GraphView {
 		paintBackground.setStrokeWidth(4);
 	}
 
+	public LineGraphView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		paintBackground = new Paint(paint);
+	}
+
+	public LineGraphView(Context context) {
+		super(context);
+		paintBackground = new Paint(paint);
+	}
+
+	private double calcXcoordinate(double valueX, double minX, double diffX,
+			double graphwidth) {
+		double valX = valueX - minX;
+		double ratX = valX / diffX;
+		double x = graphwidth * ratX;
+		return x;
+	}
+
+	private double calcYcoordinate(double valueY, double minY, double diffY,
+			double graphheight) {
+		double valY = valueY - minY;
+		double ratY = valY / diffY;
+		double y = graphheight * ratY;
+		return y;
+	}
+
 	@Override
 	public void drawSeries(Canvas canvas, GraphViewData[] values,
 			float graphwidth, float graphheight, float border, double minX,
@@ -44,13 +103,12 @@ public class LineGraphView extends GraphView {
 		if (drawBackground) {
 			float startY = graphheight + border;
 			for (int i = 0; i < values.length; i++) {
-				double valY = values[i].valueY - minY;
-				double ratY = valY / diffY;
-				double y = graphheight * ratY;
 
-				double valX = values[i].valueX - minX;
-				double ratX = valX / diffX;
-				double x = graphwidth * ratX;
+				double y = calcYcoordinate(values[i].valueY, minY, diffY,
+						graphheight);
+
+				double x = calcXcoordinate(values[i].valueX, minX, diffX,
+						graphwidth);
 
 				float endX = (float) x + (horstart + 1);
 				float endY = (float) (border - y) + graphheight + 2;
@@ -86,15 +144,13 @@ public class LineGraphView extends GraphView {
 
 		List<Float> dotsX = new LinkedList<Float>();
 		List<Float> dotsY = new LinkedList<Float>();
-
+		paint.setAntiAlias(true);
 		for (int i = 0; i < values.length; i++) {
-			double valY = values[i].valueY - minY;
-			double ratY = valY / diffY;
-			double y = graphheight * ratY;
+			double y = calcYcoordinate(values[i].valueY, minY, diffY,
+					graphheight);
 
-			double valX = values[i].valueX - minX;
-			double ratX = valX / diffX;
-			double x = graphwidth * ratX;
+			double x = calcXcoordinate(values[i].valueX, minX, diffX,
+					graphwidth);
 
 			dotsX.add(Float.valueOf((float) x));
 			dotsY.add(Float.valueOf((float) (border - y) + graphheight));
@@ -110,7 +166,14 @@ public class LineGraphView extends GraphView {
 			lastEndY = y;
 			lastEndX = x;
 		}
-
+		if (drawSpecialBackground) {
+			float startX = (float) calcXcoordinate(0, minX, diffX, graphwidth);
+			float startY = (float) calcYcoordinate(0, minY, diffY, graphheight);
+			float endX = (float) calcXcoordinate(dotsX.get(dotsX.size() - 1),
+					minX, diffX, graphwidth);
+			drawFilledPath(dotsX, dotsY, startX, endX, border - startY
+					+ graphheight, canvas);
+		}
 		drawDots(dotsX, dotsY, canvas);
 	}
 
@@ -146,5 +209,27 @@ public class LineGraphView extends GraphView {
 						(float) (dotsY.get(i) - b.getHeight() / 2), paintDots);
 			}
 		}
+	}
+
+	public void drawFilledPath(List<Float> dotsX, List<Float> dotsY,
+			Float startPoint, Float endPoint, Float y, Canvas canvas) {
+		Paint paintBack = new Paint(paint);
+
+		paintBack.setStyle(Paint.Style.FILL);
+		paintBack.setColor(colorSpecialBackground);
+		paintBack.setAlpha(alpha);
+
+		Path path = new Path();
+
+		path.moveTo(startPoint, y);
+
+		int i = 0;
+		for (i = 0; i < dotsX.size() && i < dotsY.size(); i++) {
+			path.lineTo(dotsX.get(i), dotsY.get(i));
+		}
+
+		path.lineTo(endPoint, y);
+
+		canvas.drawPath(path, paintBack);
 	}
 }

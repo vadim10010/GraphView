@@ -12,6 +12,7 @@ import android.graphics.Paint.Align;
 import android.graphics.PathEffect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -109,16 +110,29 @@ abstract public class GraphView extends LinearLayout {
 					paint.setTextAlign(Align.RIGHT);
 				if (i == 0)
 					paint.setTextAlign(Align.LEFT);
-				paint.setColor(Color.WHITE);
-				if (labelsTypeface != null) {
-					paint.setTypeface(labelsTypeface);
+
+				if (labelsHorColor != 0) {
+					paint.setColor(labelsHorColor);
+				} else {
+					paint.setColor(Color.WHITE);
 				}
+				
+				if (fontSizeHorLabes != 0) {
+					paint.setTextSize(fontSizeHorLabes);
+				}
+				
+				if (labelsHorTypeface != null) {
+					paint.setTypeface(labelsHorTypeface);
+				}
+
 				canvas.drawText(horlabels[i], x, height - 4, paint);
 			}
 
 			paint.setTextAlign(Align.CENTER);
-			canvas.drawText(title, (graphwidth / 2) + horstart, border - 4,
-					paint);
+			if (title != null) {
+				canvas.drawText(title, (graphwidth / 2) + horstart, border - 4,
+						paint);
+			}
 
 			if (maxY != minY) {
 				paint.setStrokeCap(Paint.Cap.ROUND);
@@ -205,7 +219,7 @@ abstract public class GraphView extends LinearLayout {
 	 */
 	static public class GraphViewStyle {
 		public int graphColor = 0xff0077cc;
-		public int thickness = 3;
+		public int thickness;
 
 		public GraphViewStyle() {
 			super();
@@ -328,8 +342,21 @@ abstract public class GraphView extends LinearLayout {
 			int vers = verlabels.length - 1;
 			for (int i = 0; i < verlabels.length; i++) {
 				float y = ((graphheight / vers) * i) + border;
-				paint.setColor(Color.WHITE);
-				canvas.drawText(verlabels[i], 0, y, paint);
+				
+				if (labelsVerColor != 0) {
+					paint.setColor(labelsVerColor);
+				} else {
+					paint.setColor(Color.WHITE);
+				}
+				
+				if (fontSizeVerLabes != 0) {
+					paint.setTextSize(fontSizeVerLabes);
+				}
+				
+				if (labelsVerTypeface != null) {
+					paint.setTypeface(labelsVerTypeface);
+				}
+				canvas.drawText(verlabels[i], 50, y + 5, paint);
 			}
 		}
 	}
@@ -356,7 +383,12 @@ abstract public class GraphView extends LinearLayout {
 	private Paint axisVert;
 	private VertexManager manager;
 	private int horizontalLabelsCount;
-	private Typeface labelsTypeface;
+	private Typeface labelsHorTypeface;
+	private Typeface labelsVerTypeface;
+	private float fontSizeVerLabes;
+	private float fontSizeHorLabes;
+	private int labelsVerColor;
+	private int labelsHorColor;
 
 	/**
 	 * Seting vertex manager, which manage vertex images.
@@ -387,13 +419,63 @@ abstract public class GraphView extends LinearLayout {
 		graphSeries = new ArrayList<GraphViewSeries>();
 
 		viewVerLabels = new VerLabelsView(context);
+		LayoutParams params= new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT, 1);
 		addView(viewVerLabels);
-		addView(new GraphViewContentView(context), new LayoutParams(
-				LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT, 1));
+		addView(new GraphViewContentView(context), params);
 	}
 
-	public void setLabelsTypeface(Typeface labelsTypeface) {
-		this.labelsTypeface = labelsTypeface;
+	public GraphView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		paint = new Paint();
+		viewVerLabels = new VerLabelsView(context);
+		LayoutParams params= new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT, 1);
+		addView(viewVerLabels);
+		addView(new GraphViewContentView(context), params);
+		graphSeries = new ArrayList<GraphViewSeries>();
+	}
+
+	public GraphView(Context context) {
+		super(context);
+		paint = new Paint();
+		viewVerLabels = new VerLabelsView(context);
+		LayoutParams params= new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT, 1);
+		addView(viewVerLabels);
+		addView(new GraphViewContentView(context), params);
+		graphSeries = new ArrayList<GraphViewSeries>();
+	}
+
+	/**
+	 * set Typeface for vertical labels
+	 * 
+	 * @param labelsTypeface
+	 */
+	public void setLabelsVerTypeface(Typeface labelsTypeface) {
+		this.labelsVerTypeface = labelsTypeface;
+	}
+
+	/**
+	 * set Typeface for horizontal labels
+	 * 
+	 * @param labelsTypeface
+	 */
+	public void setLabelsHorTypeface(Typeface labelsTypeface) {
+		this.labelsHorTypeface = labelsTypeface;
+	}
+
+	public void setFontSizeVerLabes(float fontSizeVerLabes) {
+		this.fontSizeVerLabes = fontSizeVerLabes;
+	}
+
+	public void setFontSizeHorLabes(float fontSizeHorLabes) {
+		this.fontSizeHorLabes = fontSizeHorLabes;
+	}
+	
+	public void setLabelsVerColor(int labelsVerColor) {
+		this.labelsVerColor = labelsVerColor;
+	}
+
+	public void setLabelsHorColor(int labelsHorColor) {
+		this.labelsHorColor = labelsHorColor;
 	}
 
 	/**
@@ -402,14 +484,14 @@ abstract public class GraphView extends LinearLayout {
 	 * @param GraphAxisStyle
 	 *            for x axis
 	 */
-	public void setyAxisHor(GraphAxisStyle style) {
+	public void setAxisHor(GraphAxisStyle style) {
 		axisHor = new Paint(paint);
 		axisHor.setColor(style.color);
 		axisHor.setStrokeWidth(style.stroke);
 
 		if (style.effects != null) {
 			for (PathEffect effect : style.effects) {
-				axisVert.setPathEffect(effect);
+				axisHor.setPathEffect(effect);
 			}
 		}
 	}
@@ -750,7 +832,6 @@ abstract public class GraphView extends LinearLayout {
 	/**
 	 * this forces scrollable = true
 	 * 
-	 * @param scalable
 	 */
 	synchronized public void setScalable(boolean scalable) {
 		this.scalable = scalable;
