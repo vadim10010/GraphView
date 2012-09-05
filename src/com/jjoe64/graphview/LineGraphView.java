@@ -81,7 +81,7 @@ public class LineGraphView extends GraphView {
 			double graphwidth) {
 		double valX = valueX - minX;
 		double ratX = valX / diffX;
-		double x = graphwidth * ratX;
+		double x = graphwidth * ratX + GraphView.padding;
 		return x;
 	}
 
@@ -98,6 +98,7 @@ public class LineGraphView extends GraphView {
 			float graphwidth, float graphheight, float border, double minX,
 			double minY, double diffX, double diffY, float horstart) {
 		// draw background
+		graphwidth = graphwidth - GraphView.padding;
 		double lastEndY = 0;
 		double lastEndX = 0;
 		if (drawBackground) {
@@ -167,12 +168,8 @@ public class LineGraphView extends GraphView {
 			lastEndX = x;
 		}
 		if (drawSpecialBackground) {
-			float startX = (float) calcXcoordinate(0, minX, diffX, graphwidth);
 			float startY = (float) calcYcoordinate(0, minY, diffY, graphheight);
-			float endX = (float) calcXcoordinate(dotsX.get(dotsX.size() - 1),
-					minX, diffX, graphwidth);
-			drawFilledPath(dotsX, dotsY, startX, endX, border - startY
-					+ graphheight, canvas);
+			drawFilledPath(dotsX, dotsY, border - startY + graphheight, canvas);
 		}
 		drawDots(dotsX, dotsY, canvas);
 	}
@@ -211,8 +208,8 @@ public class LineGraphView extends GraphView {
 		}
 	}
 
-	public void drawFilledPath(List<Float> dotsX, List<Float> dotsY,
-			Float startPoint, Float endPoint, Float y, Canvas canvas) {
+	public void drawFilledPath(List<Float> dotsX, List<Float> dotsY, Float y,
+			Canvas canvas) {
 		Paint paintBack = new Paint(paint);
 
 		paintBack.setStyle(Paint.Style.FILL);
@@ -221,14 +218,14 @@ public class LineGraphView extends GraphView {
 
 		Path path = new Path();
 
-		path.moveTo(startPoint, y);
+		path.moveTo(dotsX.get(0), y);
 
 		int i = 0;
 		for (i = 0; i < dotsX.size() && i < dotsY.size(); i++) {
 			path.lineTo(dotsX.get(i), dotsY.get(i));
 		}
 
-		path.lineTo(endPoint, y);
+		path.lineTo(dotsX.get(dotsX.size() - 1), y);
 
 		canvas.drawPath(path, paintBack);
 	}
