@@ -73,6 +73,7 @@ abstract public class GraphView extends LinearLayout {
 			double diffX = maxX - minX;
 			float graphheight = height - (2 * border);
 			graphwidth = width - padding;
+			float ladgeSize = 5;
 
 			if (horlabels == null) {
 				horlabels = generateHorlabels(graphwidth);
@@ -81,33 +82,19 @@ abstract public class GraphView extends LinearLayout {
 				verlabels = generateVerlabels(graphheight);
 			}
 
-			// horizontal lines
-			paint.setTextAlign(Align.LEFT);
-
-			int vers = verlabels.length - 1;
-			for (int i = 0; i < verlabels.length; i++) {
-				paint.setColor(Color.DKGRAY);
-				float y = ((graphheight / vers) * i) + border;
-				if (axisHor != null) {
-					canvas.drawLine(horstart + padding, y, width - padding, y,
-							axisHor);
-				} else {
-					canvas.drawLine(horstart + padding, y, width - padding, y,
-							paint);
-				}
-			}
-
 			// horizontal labels + vertical lines
+			int vers = verlabels.length - 1;
 			int hors = horlabels.length - 1;
 			for (int i = 0; i < horlabels.length; i++) {
 				float x = (((graphwidth - padding) / hors) * i) + horstart;
-				if (unableFirstAndLastAxisVertLines && !(i == 0 || i == horlabels.length - 1)) {
+				if (unableFirstAndLastAxisVertLines
+						&& !(i == 0 || i == horlabels.length - 1)) {
 					if (axisVert != null) {
-						canvas.drawLine(x + padding, height - border, x
-								+ padding, border, axisVert);
+						canvas.drawLine(x + padding, height - border + ladgeSize, x + padding, border - ladgeSize,
+								axisVert);
 					} else {
-						canvas.drawLine(x + padding, height - border, x
-								+ padding, border, paint);
+						canvas.drawLine(x + padding, height - border + ladgeSize, x + padding, border - ladgeSize,
+								paint);
 					}
 				}
 				paint.setTextAlign(Align.CENTER);
@@ -127,6 +114,34 @@ abstract public class GraphView extends LinearLayout {
 				}
 
 				canvas.drawText(horlabels[i], x + padding, height - 4, paint);
+			}
+
+			// horizontal lines
+			paint.setTextAlign(Align.LEFT);
+			vers = verlabels.length - 1;
+			for (int i = 0; i < verlabels.length; i++) {
+				paint.setColor(Color.DKGRAY);
+				float y = ((graphheight / vers) * i) + border;
+
+				if (specialXaxis && i == verlabels.length - 1) {
+					Paint paintX = new Paint(paint);
+					paintX.setColor(Color.rgb(60, 105, 155));
+					paintX.setStrokeWidth(0);
+					canvas.drawLine(horstart + padding, y + 1, width - padding,
+							y + 1, paintX);
+					paintX.setColor(Color.rgb(48, 96, 147));
+					canvas.drawLine(horstart + padding, y, width - padding,
+							y + 1, paintX);
+					break;
+				}
+
+				if (axisHor != null) {
+					canvas.drawLine(horstart + padding, y, width - padding, y,
+							axisHor);
+				} else {
+					canvas.drawLine(horstart + padding, y, width - padding, y,
+							paint);
+				}
 			}
 
 			paint.setTextAlign(Align.CENTER);
@@ -368,6 +383,15 @@ abstract public class GraphView extends LinearLayout {
 	private int labelsVerColor;
 	private int labelsHorColor;
 	private boolean unableFirstAndLastAxisVertLines;
+	private boolean specialXaxis;
+
+	public boolean isSpecialXaxis() {
+		return specialXaxis;
+	}
+
+	public void setSpecialXaxis(boolean specialXaxis) {
+		this.specialXaxis = specialXaxis;
+	}
 
 	public boolean isUnableFirstAndLastAxisVertLines() {
 		return unableFirstAndLastAxisVertLines;

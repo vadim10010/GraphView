@@ -7,8 +7,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Align;
 import android.graphics.Path;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 
 /**
@@ -26,6 +29,24 @@ public class LineGraphView extends GraphView {
 	private int colorSpecialBackground;
 	private int alpha;
 	private boolean drawSpecialBackground;
+	private boolean signLastPoint;
+	private Typeface signLastPointTypeface;
+	
+	public Typeface getSignLastPointTypeface() {
+		return signLastPointTypeface;
+	}
+
+	public void setSignLastPointTypeface(Typeface signLastPointTypeface) {
+		this.signLastPointTypeface = signLastPointTypeface;
+	}
+
+	public boolean isSignLastPoint() {
+		return signLastPoint;
+	}
+
+	public void setSignLastPoint(boolean signLastPoint) {
+		this.signLastPoint = signLastPoint;
+	}
 
 	public int getAlpha() {
 		return alpha;
@@ -77,7 +98,7 @@ public class LineGraphView extends GraphView {
 		paintBackground = new Paint(paint);
 	}
 
-	private double calcXcoordinate(double valueX, double minX, double diffX,
+	private static double calcXcoordinate(double valueX, double minX, double diffX,
 			double graphwidth) {
 		double valX = valueX - minX;
 		double ratX = valX / diffX;
@@ -85,7 +106,7 @@ public class LineGraphView extends GraphView {
 		return x;
 	}
 
-	private double calcYcoordinate(double valueY, double minY, double diffY,
+	private static double calcYcoordinate(double valueY, double minY, double diffY,
 			double graphheight) {
 		double valY = valueY - minY;
 		double ratY = valY / diffY;
@@ -164,6 +185,20 @@ public class LineGraphView extends GraphView {
 
 				canvas.drawLine(startX, startY, endX, endY, paint);
 			}
+
+			if (signLastPoint && i == values.length - 1) {
+				Paint paintD = new Paint(paint);
+				paintD.setColor(Color.WHITE);
+				paintD.setTypeface(signLastPointTypeface);
+				paintD.setTextAlign(Align.CENTER);
+				paintD.setTextSize(Float.valueOf((float) 20.93));
+				canvas.drawText(String.valueOf(Math.round(values[i].valueY)), (float) x,
+						(float) y + 60, paintD);
+				paintD.setColor(Color.rgb(51, 153, 153));
+				paintD.setTextSize(Float.valueOf((float) 13.82));
+				canvas.drawText("POINTS", (float) x, (float) y + 75, paintD);
+			}
+
 			lastEndY = y;
 			lastEndX = x;
 		}
